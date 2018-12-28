@@ -7,6 +7,9 @@ import random
 
 SendInput = ctypes.windll.user32.SendInput
 
+
+
+#############################SF V Actions#############################
 W = 0x11
 A = 0x1E
 S = 0x1F
@@ -83,22 +86,22 @@ ctypes.pointer(extra) )
 
 if __name__ == '__main__':
     basic_movements = [W, A, S, D]
-    basic_attacks = [light_kick, medium_kick, heavy_kick, all_kick, light_punch, medium_punch, heavy_punch, all_punch]
+    basic_attacks = [light_kick, medium_kick, heavy_kick, light_punch, medium_punch, heavy_punch]
     time.sleep(8)
     while True:
         try:
             current_movement = basic_movements[random.randint(0, len(basic_movements))]
             pressKey(current_movement)
-            time.sleep(0.8)
+            time.sleep(0.05)
             releaseKey(current_movement)
         except:
             do_nothing()
         try:
             current_attack = basic_attacks[random.randint(0, len(basic_attacks))]
             pressKey(current_attack)
-            time.sleep(0.3)
+            time.sleep(0.05)
             releaseKey(current_attack)
         except:
             do_nothing()
 
-        time.sleep(0.5)
+        time.sleep(0.05)
