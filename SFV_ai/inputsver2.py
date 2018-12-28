@@ -376,3 +376,4 @@ if __name__ == '__main__':
                 executeAction(choice)
         else:
             do_nothing()
+        time.sleep(0.1)
