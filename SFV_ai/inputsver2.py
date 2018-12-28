@@ -319,7 +319,7 @@ if __name__ == '__main__':
     time.sleep(8)
 
     while True:
-        choose_action = random.random(0, 101)
+        choose_action = random.randint(0, 101)
         if choose_action <=20:
             choice = random.choice(movements)
             if type(choice) is str:
