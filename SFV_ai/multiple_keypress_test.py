@@ -88,7 +88,6 @@ if __name__ == '__main__':
     time.sleep(8)
     while True:
         pressKey(D)
-        time.sleep(0.05)
         pressKey(S)
         time.sleep(2)
         releaseKey(D) 

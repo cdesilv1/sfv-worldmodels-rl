@@ -10,25 +10,32 @@ SendInput = ctypes.windll.user32.SendInput
 
 
 #############################SF V Actions#############################
-W = 0x11
-A = 0x1E
-S = 0x1F
-D = 0x20
-Z = 0x2C
-# UP = 0xC8
-# DOWN = 0xD0
-# LEFT = 0xCB
-# RIGHT = 0xCD
-ENTER = 0x1C
 
-light_kick = 0x30 #light kick
-light_punch = 0x22 #light punch
-medium_kick = 0x31 #medium kick
-medium_punch = 0x23 #medium punch
-heavy_kick = 0x32 #heavy kick
-heavy_punch = 0x24 #heavy punch
-all_kick = 0x33 #all kick
-all_punch = 0x25 #all punch
+#############################Movement#############################
+UP = 0x11 #W
+LEFT = 0x1E #A
+DOWN = 0x1F #S
+RIGHT = 0x20 #D
+
+UP_LEFT = [UP, LEFT]
+UP_RIGHT = [UP, RIGHT]
+DOWN_LEFT = [DOWN, LEFT]
+DOWN_RIGHT = [DOWN, RIGHT]
+
+
+
+#############################Basic Attacks#############################
+
+LK = 0x30 #light kick
+LP = 0x22 #light punch
+MK = 0x31 #medium kick
+MP = 0x23 #medium punch
+HK = 0x32 #heavy kick
+HP = 0x24 #heavy punch
+AK = 0x33 #all kick
+AP = 0x25 #all punch
+
+
 
 def do_nothing():
     time.sleep(0.4)
@@ -84,23 +91,39 @@ ctypes.pointer(extra) )
     x = Input( ctypes.c_ulong(1), ii_ )
     ctypes.windll.user32.SendInput(1, ctypes.pointer(x), ctypes.sizeof(x))
 
+
+
+def executeAction(action, duration=0.05):
+    if type(action) is int:
+        pressKey(action)
+        time.sleep(duration)
+        releaseKey(action)
+
+    elif type(action) is list:
+        for i in range(len(action)):
+            pressKey(action[i])
+        time.sleep(duration)
+        for i in range(len(action)):
+            releaseKey(action[i])
+
+    else:
+        raise TypeError('action needs to be an int or list')
+
+
 if __name__ == '__main__':
-    basic_movements = [W, A, S, D]
-    basic_attacks = [light_kick, medium_kick, heavy_kick, light_punch, medium_punch, heavy_punch]
+    movements = [UP, LEFT, RIGHT, DOWN]
+    durations = [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4]
+    attacks = [LK, MK, HK, LP, MP, HP]
     time.sleep(8)
     while True:
         try:
-            current_movement = basic_movements[random.randint(0, len(basic_movements))]
-            pressKey(current_movement)
-            time.sleep(0.05)
-            releaseKey(current_movement)
+            current_movement = movements[random.randint(0, len(movements))]
+            executeAction(current_movement)
         except:
             do_nothing()
         try:
-            current_attack = basic_attacks[random.randint(0, len(basic_attacks))]
-            pressKey(current_attack)
-            time.sleep(0.05)
-            releaseKey(current_attack)
+            current_attack = attacks[random.randint(0, len(attacks))]
+            executeAction(current_attack)
         except:
             do_nothing()
 
