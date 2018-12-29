@@ -191,6 +191,7 @@ def DASH_LEFT(LEFT=LEFT):
     time.sleep(0.015)
     pressKey(LEFT)
     releaseKey(LEFT)
+    time.sleep(0.015)
 
 def DASH_RIGHT(RIGHT=RIGHT):
     pressKey(RIGHT)
@@ -198,6 +199,7 @@ def DASH_RIGHT(RIGHT=RIGHT):
     time.sleep(0.015)
     pressKey(RIGHT)
     releaseKey(RIGHT)
+    time.sleep(0.015)
 
 
 #############################Advanced Attacks#############################
@@ -205,18 +207,22 @@ def DASH_RIGHT(RIGHT=RIGHT):
 def HADOKEN_LEFT():
     QCL()
     executeAction(LP)
+    time.sleep(0.015)
 
 def HADOKEN_RIGHT():
     QCR()
     executeAction(LP)
+    time.sleep(0.015)
 
 def SHAKUNETSU_HADOKEN_LEFT():
     HCL()
     executeAction(LP)
+    time.sleep(0.015)
 
 def SHAKUNETSU_HADOKEN_RIGHT():
     HCR()
     executeAction(LP)
+    time.sleep(0.015)
 
 def SHORYUKEN_LEFT(LEFT=LEFT, DOWN=DOWN):
     pressKey(LEFT)
@@ -234,6 +240,7 @@ def SHORYUKEN_LEFT(LEFT=LEFT, DOWN=DOWN):
     releaseKey(DOWN)
     releaseKey(LEFT)
     releaseKey(LP)
+    time.sleep(0.015)
 
 def SHORYUKEN_RIGHT(RIGHT=RIGHT, DOWN=DOWN):
     pressKey(RIGHT)
@@ -251,6 +258,7 @@ def SHORYUKEN_RIGHT(RIGHT=RIGHT, DOWN=DOWN):
     releaseKey(DOWN)
     releaseKey(RIGHT)
     releaseKey(LP)
+    time.sleep(0.015)
 
 def KUREKIJIN_LEFT():
     QCL()
@@ -376,4 +384,4 @@ if __name__ == '__main__':
                 executeAction(choice)
         else:
             do_nothing()
-        time.sleep(0.1)
+        time.sleep(0.25)
