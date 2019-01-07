@@ -397,21 +397,9 @@ class random_action_thread(threading.Thread):
                 time.sleep(27) # TODO: tune sleep time for macro stopping point
                 self.stop = 0
             make_random_action()
-
-class getcher_thread(threading.Thread):
-    def __init__(self, threadID, stopkey=b'65'):
-        threading.Thread.__init__(self)
-        self.threadID = threadID
-        self.stopkey = stopkey
-        self.stop = 0
-    def run(self):
-        while True:
-            current_key = getKey()
-            if current_key == self.stopkey:
-                self.stop = 1
             
 class keylogger_thread(threading.Thread):
-    def __init__(self, threadID, stopkey=b'65'):
+    def __init__(self, threadID, stopkey=65):
         threading.Thread.__init__(self)
         self.threadID = threadID
         self.stopkey = stopkey
@@ -419,20 +407,22 @@ class keylogger_thread(threading.Thread):
     def run(self):
         hm = pyHook.HookManager()
         hm.KeyEvent = OnKeyboardEvent
+        if hm.KeyEvent == self.stopkey:
+            self.stop = 1
         hm.HookKeyboard()
-        python com.PumpMessages()
+        pythoncom.PumpMessages()
 
 #############################__main__#############################
 
 if __name__ == '__main__':
     time.sleep(10)
-    getcher_thread = getcher_thread(0)
+    keylogger_thread = keylogger_thread(0)
     random_action_thread = random_action_thread(1)
 
-    getcher_thread.start()
+    keylogger_thread.start()
     random_action_thread.start()
     while True:
-        if getcher_thread.stop == 1:
+        if keylogger_thread.stop == 1:
             random_action_thread.stop = 1
-            getcher_thread.stop = 0
+            keylogger_thread.stop = 0
     
