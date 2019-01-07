@@ -2,7 +2,8 @@ import ctypes
 import time
 import random
 import threading
-from _getcher import getKey
+import pythoncom, pyHook
+from _keylogger import OnKeyboardEvent
 
 SendInput = ctypes.windll.user32.SendInput
 
@@ -409,7 +410,17 @@ class getcher_thread(threading.Thread):
             if current_key == self.stopkey:
                 self.stop = 1
             
-
+class keylogger_thread(threading.Thread):
+    def __init__(self, threadID, stopkey=b'65'):
+        threading.Thread.__init__(self)
+        self.threadID = threadID
+        self.stopkey = stopkey
+        self.stop = 0
+    def run(self):
+        hm = pyHook.HookManager()
+        hm.KeyEvent = OnKeyboardEvent
+        hm.HookKeyboard()
+        python com.PumpMessages()
 
 #############################__main__#############################
 
