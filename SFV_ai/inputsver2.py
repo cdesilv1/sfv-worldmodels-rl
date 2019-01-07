@@ -393,7 +393,7 @@ class random_action_thread(threading.Thread):
     def run(self):
         while True:
             if self.stop == 1:
-                time.sleep(20) # TODO: tune sleep time for macro stopping point
+                time.sleep(27) # TODO: tune sleep time for macro stopping point
                 self.stop = 0
             make_random_action()
 
