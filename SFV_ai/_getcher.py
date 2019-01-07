@@ -1,3 +1,5 @@
+import time
+
 class _Getch:
     """Gets a single character from standard input.  Does not echo to the
 screen. From http://code.activestate.com/recipes/134892/"""
@@ -69,3 +71,9 @@ def getKey():
     inkey = _Getch()
     return inkey()
         # for ASCII Keyboard Byte-String codes, 65 == 'F7' Key
+
+if __name__ == '__main__':
+    while True:
+        time.sleep(0.5)
+        inkey = _Getch()
+        print(inkey())
