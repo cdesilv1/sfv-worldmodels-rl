@@ -414,6 +414,7 @@ class getcher_thread(threading.Thread):
 #############################__main__#############################
 
 if __name__ == '__main__':
+    time.sleep(10)
     getcher_thread = getcher_thread(0)
     random_action_thread = random_action_thread(1)
 
