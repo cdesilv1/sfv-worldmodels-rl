@@ -1,13 +1,10 @@
 import ctypes
 import time
 import random
-
-
-
+import threading
+from _getcher import getKey
 
 SendInput = ctypes.windll.user32.SendInput
-
-
 
 
 #############################Movement#############################
@@ -23,7 +20,6 @@ DOWN_LEFT = [DOWN, LEFT]
 DOWN_RIGHT = [DOWN, RIGHT]
 
 
-
 #############################Basic Attacks#############################
 
 LK = 0x30 #light kick
@@ -35,6 +31,7 @@ HP = 0x24 #heavy punch
 AK = 0x33 #all kick
 AP = 0x25 #all punch
 THROW = [LP, LK]
+
 
 #############################Directional Attacks#############################
 
@@ -48,11 +45,6 @@ DOWN_HP = [DOWN, HP]
 DOWN_MK = [DOWN, MK] # Tenmakujinkyaku
 
 
-
-
-
-
-
 #############################Miscellaneous Actions#############################
 
 VTRIGGER = [HP, HK]
@@ -61,8 +53,6 @@ CHARGED_ATK = [MP, MK]
 
 def do_nothing():
     time.sleep(0.4)
-
-
 
 
 # C struct redefinitions 
@@ -112,8 +102,6 @@ def releaseKey(hexKeyCode):
 ctypes.pointer(extra) )
     x = Input( ctypes.c_ulong(1), ii_ )
     ctypes.windll.user32.SendInput(1, ctypes.pointer(x), ctypes.sizeof(x))
-
-
 
 
 def executeAction(action, duration=0.0167): # Execute Keypresses
@@ -313,9 +301,9 @@ def LONG_SPINKICK_RIGHT():
     time.sleep(0.05)
 
 
-#############################__main__#############################
+#############################Make Random Action#############################
 
-if __name__ == '__main__':
+def make_random_action():
     '''
     For the case of the randomized actions, actions will be chosen from a distribution as follows: movemements: 20%, attacks: 45%, special_attacks: 25%, trigger_moves: 5%, do_nothing: 5%
     movement durations will be chosen uniformly, and once a category is chosen, actions will be chosen uniformly
@@ -330,68 +318,109 @@ if __name__ == '__main__':
 
     special_attacks = [CHARGED_ATK, 'HADOKEN_LEFT', 'HADOKEN_RIGHT', 'SHAKUNETSU_HADOKEN_LEFT', 'SHAKUNETSU_HADOKEN_RIGHT', 'SHORYUKEN_LEFT',\
     'SHORYUKEN_RIGHT', 'KUREKIJIN_LEFT', 'KUREKIJIN_RIGHT', 'RYUSOKYAKU_LEFT', 'RYUSOKYAKU_RIGHT', 'SHORT_SPINKICK_LEFT',\
-     'SHORT_SPINKICK_RIGHT', 'LONG_SPINKICK_LEFT', 'LONG_SPINKICK_RIGHT']
+    'SHORT_SPINKICK_RIGHT', 'LONG_SPINKICK_LEFT', 'LONG_SPINKICK_RIGHT']
 
     trigger_moves = [VTRIGGER, 'METSU_SHORYUKEN_LEFT', 'METSU_SHORYUKEN_RIGHT']
 
-    time.sleep(8)
 
-    while True:
-        choose_action = random.randint(0, 101)
-        if choose_action <=20:
-            choice = random.choice(movements)
-            if type(choice) is str:
-                if choice == 'DASH_LEFT':
-                    DASH_LEFT()
-                else:
-                    DASH_RIGHT()
+    choose_action = random.randint(0, 101)
+    if choose_action <=20:
+        choice = random.choice(movements)
+        if type(choice) is str:
+            if choice == 'DASH_LEFT':
+                DASH_LEFT()
             else:
-                executeAction(choice, random.choice(durations))
-        elif choose_action >20 and choose_action <=65:
-            choice = random.choice(attacks)
-            executeAction(choice)
-        elif choose_action >65 and choose_action <=90:
-            choice = random.choice(special_attacks)
-            if type(choice) is str:
-                if choice == 'HADOKEN_LEFT':
-                    HADOKEN_LEFT()
-                elif choice == 'HADOKEN_RIGHT':
-                    HADOKEN_RIGHT()
-                elif choice == 'SHAKUNETSU_HADOKEN_LEFT':
-                    SHAKUNETSU_HADOKEN_LEFT()
-                elif choice == 'SHAKUNETSU_HADOKEN_RIGHT':
-                    SHAKUNETSU_HADOKEN_RIGHT()
-                elif choice == 'SHORYUKEN_LEFT':
-                    SHORYUKEN_LEFT()
-                elif choice == 'SHORYUKEN_RIGHT':
-                    SHORYUKEN_RIGHT()
-                elif choice == 'KUREKIJIN_LEFT':
-                    KUREKIJIN_LEFT()
-                elif choice == 'KUREKIJIN_RIGHT':
-                    KUREKIJIN_RIGHT()
-                elif choice == 'RYUSOKYAKU_LEFT':
-                    RYUSOKYAKU_LEFT()
-                elif choice == 'RYUSOKYAKU_RIGHT':
-                    RYUSOKYAKU_RIGHT()
-                elif choice == 'SHORT_SPINKICK_LEFT':
-                    SHORT_SPINKICK_LEFT()
-                elif choice == 'SHORT_SPINKICK_RIGHT':
-                    SHORT_SPINKICK_RIGHT()
-                elif choice == 'LONG_SPINKICK_LEFT':
-                    LONG_SPINKICK_LEFT()
-                else:
-                    LONG_SPINKICK_RIGHT()
-            else:
-                executeAction(choice)
-        elif choose_action >90 and choose_action <=95:
-            choice = random.choice(trigger_moves)
-            if type(choice) is str:
-                if choice == 'METSU_SHORYUKEN_LEFT':
-                    METSU_SHORYUKEN_LEFT()
-                else:
-                    METSU_SHORYUKEN_RIGHT()
-            else:
-                executeAction(choice)
+                DASH_RIGHT()
         else:
-            do_nothing()
-        time.sleep(0.0167)
+            executeAction(choice, random.choice(durations))
+    elif choose_action >20 and choose_action <=65:
+        choice = random.choice(attacks)
+        executeAction(choice)
+    elif choose_action >65 and choose_action <=90:
+        choice = random.choice(special_attacks)
+        if type(choice) is str:
+            if choice == 'HADOKEN_LEFT':
+                HADOKEN_LEFT()
+            elif choice == 'HADOKEN_RIGHT':
+                HADOKEN_RIGHT()
+            elif choice == 'SHAKUNETSU_HADOKEN_LEFT':
+                SHAKUNETSU_HADOKEN_LEFT()
+            elif choice == 'SHAKUNETSU_HADOKEN_RIGHT':
+                SHAKUNETSU_HADOKEN_RIGHT()
+            elif choice == 'SHORYUKEN_LEFT':
+                SHORYUKEN_LEFT()
+            elif choice == 'SHORYUKEN_RIGHT':
+                SHORYUKEN_RIGHT()
+            elif choice == 'KUREKIJIN_LEFT':
+                KUREKIJIN_LEFT()
+            elif choice == 'KUREKIJIN_RIGHT':
+                KUREKIJIN_RIGHT()
+            elif choice == 'RYUSOKYAKU_LEFT':
+                RYUSOKYAKU_LEFT()
+            elif choice == 'RYUSOKYAKU_RIGHT':
+                RYUSOKYAKU_RIGHT()
+            elif choice == 'SHORT_SPINKICK_LEFT':
+                SHORT_SPINKICK_LEFT()
+            elif choice == 'SHORT_SPINKICK_RIGHT':
+                SHORT_SPINKICK_RIGHT()
+            elif choice == 'LONG_SPINKICK_LEFT':
+                LONG_SPINKICK_LEFT()
+            else:
+                LONG_SPINKICK_RIGHT()
+        else:
+            executeAction(choice)
+    elif choose_action >90 and choose_action <=95:
+        choice = random.choice(trigger_moves)
+        if type(choice) is str:
+            if choice == 'METSU_SHORYUKEN_LEFT':
+                METSU_SHORYUKEN_LEFT()
+            else:
+                METSU_SHORYUKEN_RIGHT()
+        else:
+            executeAction(choice)
+    else:
+        do_nothing()
+    time.sleep(0.0167)
+
+
+#############################Threading Classes#############################
+
+class random_action_thread(threading.Thread):
+    def __init__(self, threadID):
+        threading.Thread.__init__(self)
+        self.threadID = threadID
+        self.stop = 0
+    def run(self):
+        while True:
+            if self.stop == 1:
+                time.sleep(20) # TODO: tune sleep time for macro stopping point
+                self.stop = 0
+            make_random_action()
+
+class getcher_thread(threading.Thread):
+    def __init__(self, threadID, stopkey=b'65'):
+        threading.Thread.__init__(self)
+        self.threadID = threadID
+        self.stopkey = stopkey
+        self.stop = 0
+    def run(self):
+        while True:
+            current_key = getKey()
+            if current_key == self.stopkey:
+                self.stop = 1
+            
+
+
+#############################__main__#############################
+
+if __name__ == '__main__':
+    getcher_thread = getcher_thread(0)
+    random_action_thread = random_action_thread(1)
+
+    getcher_thread.start()
+    random_action_thread.start()
+    while True:
+        if getcher_thread.stop == 1:
+            random_action_thread.stop = 1
+            getcher_thread.stop = 0
+    
