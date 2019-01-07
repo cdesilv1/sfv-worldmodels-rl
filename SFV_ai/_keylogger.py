@@ -9,7 +9,7 @@ def OnKeyboardEvent(event):
     # print('Ascii:', event.Ascii, chr(event.Ascii))
     # print('Key:', event.Key)
     # print('KeyID:', event.KeyID)
-    print(type(event.ScanCode))
+    return event.ScanCode
     # print('Extended:', event.Extended)
     # print('Injected:', event.Injected)
     # print('Alt', event.Alt)
@@ -17,7 +17,7 @@ def OnKeyboardEvent(event):
     # print('---')
 
 # return True to pass the event to other handlers
-    return True
+    # return True
 
 if __name__ == '__main__':
     # create a hook manager
