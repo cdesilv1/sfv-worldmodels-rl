@@ -395,7 +395,7 @@ class random_action_thread(threading.Thread):
         while True:
             try:
                 stop_triggered = self.in_q.get(True, 0.0167)
-                time.sleep(27) # TODO: tune sleep time for macro stopping point
+                time.sleep(29) # TODO: tune sleep time for macro stopping point
             except:
                 make_random_action()
 
@@ -434,6 +434,7 @@ def main():
             on_release = on_release) as listener:
             listener.join()
             in_q.put(1)
+            time.sleep(3)
 
 
 if __name__ == '__main__':
