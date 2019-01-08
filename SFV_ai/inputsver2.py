@@ -2,8 +2,6 @@ import ctypes
 import time
 import random
 import threading
-import pythoncom, pyHook
-from _keylogger import OnKeyboardEvent
 
 SendInput = ctypes.windll.user32.SendInput
 
