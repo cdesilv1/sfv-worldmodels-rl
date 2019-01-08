@@ -21,7 +21,7 @@ def OnKeyboardEvent(event):
     return True
 
 def KeybdEvent(event):
-    return KeyboardEvent.GetKey(event)
+    return KeyboardEvent.GetKey()
 
 if __name__ == '__main__':
     # create a hook manager
