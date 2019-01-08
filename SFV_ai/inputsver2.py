@@ -2,6 +2,9 @@ import ctypes
 import time
 import random
 import threading
+from pynput.keyboard import Key, Listener
+import queue
+
 
 SendInput = ctypes.windll.user32.SendInput
 
@@ -382,45 +385,57 @@ def make_random_action():
     time.sleep(0.0167)
 
 
-#############################Threading Classes#############################
+#############################Threading Class#############################
 
 class random_action_thread(threading.Thread):
-    def __init__(self, threadID):
+    def __init__(self, in_q):
         threading.Thread.__init__(self)
-        self.threadID = threadID
-        self.stop = 0
+        self.in_q = in_q
     def run(self):
         while True:
-            if self.stop == 1:
+            try:
+                stop_triggered = self.in_q.get(True, 0.0167)
                 time.sleep(27) # TODO: tune sleep time for macro stopping point
-                self.stop = 0
-            make_random_action()
-            
-class keylogger_thread(threading.Thread):
-    def __init__(self, threadID, stopkey=65):
-        threading.Thread.__init__(self)
-        self.threadID = threadID
-        self.stopkey = stopkey
-        self.stop = 0
-    def run(self):
-        hm = pyHook.HookManager()
-        hm.KeyEvent = OnKeyboardEvent
-        if hm.KeyEvent == self.stopkey:
-            self.stop = 1
-        hm.HookKeyboard()
-        pythoncom.PumpMessages()
+            except self.in_q.empty():
+                make_random_action()
+
+
+#############################Listener Functions#############################
+
+def on_press(key):
+    print('{0} pressed'.format(
+        key))
+
+def on_release(key):
+    print('{0} release'.format(
+        key))
+    if key == Key.f7:
+        # Stop listener
+        return False
+
+
 
 #############################__main__#############################
 
-if __name__ == '__main__':
-    time.sleep(10)
-    keylogger_thread = keylogger_thread(0)
-    random_action_thread = random_action_thread(1)
 
-    keylogger_thread.start()
-    random_action_thread.start()
+def main():
+    time.sleep(10)
+
+    in_q = queue.Queue()
+    out_q = queue.Queue()
+
+    random_actions = random_action_thread(in_q)
+
+    random_actions.start()
+
     while True:
-        if keylogger_thread.stop == 1:
-            random_action_thread.stop = 1
-            keylogger_thread.stop = 0
+        with Listener(
+            on_press = on_press,
+            on_release = on_release) as listener:
+            listener.join()
+            in_q.put(1)
+
+
+if __name__ == '__main__':
+    main()
     
