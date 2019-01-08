@@ -396,7 +396,7 @@ class random_action_thread(threading.Thread):
             try:
                 stop_triggered = self.in_q.get(True, 0.0167)
                 time.sleep(27) # TODO: tune sleep time for macro stopping point
-            except self.in_q.empty():
+            except:
                 make_random_action()
 
 
