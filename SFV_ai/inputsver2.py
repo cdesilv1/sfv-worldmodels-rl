@@ -422,7 +422,7 @@ def main():
     time.sleep(10)
 
     in_q = queue.Queue()
-    out_q = queue.Queue()
+    # out_q = queue.Queue()
 
     random_actions = random_action_thread(in_q)
 
