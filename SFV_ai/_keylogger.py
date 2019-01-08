@@ -16,19 +16,17 @@ def OnKeyboardEvent(event):
     # print('Alt', event.Alt)
     # print('Transition', event.Transition)
     # print('---')
+    print (event.GetKey())
 
 # return True to pass the event to other handlers
     return True
 
-def KeybdEvent(event):
-    return event.GetKey()
 
 if __name__ == '__main__':
     # create a hook manager
     hm = pyHook.HookManager()
     # watch for all mouse events
     hm.KeyDown = OnKeyboardEvent
-    print(KeybdEvent)
     # set the hook
     hm.HookKeyboard()
     # wait forever
