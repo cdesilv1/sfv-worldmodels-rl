@@ -2,6 +2,7 @@ import ctypes
 import time
 import random
 import threading
+import pynput
 from pynput.keyboard import Key, Listener
 import queue
 
@@ -90,20 +91,19 @@ class Input(ctypes.Structure):
 
 # Actuals Functions
 
-def pressKey(hexKeyCode):
+def PressKeyPynput(hexKeyCode):
     extra = ctypes.c_ulong(0)
-    ii_ = Input_I()
-    ii_.ki = KeyBdInput( 0, hexKeyCode, 0x0008, 0, ctypes.pointer(extra) )
-    x = Input( ctypes.c_ulong(1), ii_ )
-    ctypes.windll.user32.SendInput(1, ctypes.pointer(x), ctypes.sizeof(x))
+    ii_ = pynput._util.win32.INPUT_union()
+    ii_.ki = pynput._util.win32.KEYBDINPUT(0, hexKeyCode, 0x0008, 0, ctypes.cast(ctypes.pointer(extra), ctypes.c_void_p))
+    x = pynput._util.win32.INPUT(ctypes.c_ulong(1), ii_)
+    SendInput(1, ctypes.pointer(x), ctypes.sizeof(x))
 
-def releaseKey(hexKeyCode):
+def ReleaseKeyPynput(hexKeyCode):
     extra = ctypes.c_ulong(0)
-    ii_ = Input_I()
-    ii_.ki = KeyBdInput( 0, hexKeyCode, 0x0008 | 0x0002, 0, 
-ctypes.pointer(extra) )
-    x = Input( ctypes.c_ulong(1), ii_ )
-    ctypes.windll.user32.SendInput(1, ctypes.pointer(x), ctypes.sizeof(x))
+    ii_ = pynput._util.win32.INPUT_union()
+    ii_.ki = pynput._util.win32.KEYBDINPUT(0, hexKeyCode, 0x0008 | 0x0002, 0, ctypes.cast(ctypes.pointer(extra), ctypes.c_void_p))
+    x = pynput._util.win32.INPUT(ctypes.c_ulong(1), ii_)
+    SendInput(1, ctypes.pointer(x), ctypes.sizeof(x))
 
 
 def executeAction(action, duration=0.0167): # Execute Keypresses
