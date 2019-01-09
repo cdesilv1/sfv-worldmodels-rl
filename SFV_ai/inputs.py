@@ -409,7 +409,7 @@ def on_press(key):
 def on_release(key):
     print('{0} release'.format(
         key))
-    if key == 'x':
+    if key == pynput.keyboard.KeyCode().from_char('x'):
         # Stop listener
         return False
 
