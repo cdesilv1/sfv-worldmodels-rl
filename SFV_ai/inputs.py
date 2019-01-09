@@ -434,7 +434,7 @@ def main():
             on_release = on_release) as listener:
             listener.join()
             in_q.put(1)
-            time.sleep(3)
+            time.sleep(30)
 
 
 if __name__ == '__main__':
