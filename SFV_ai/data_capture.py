@@ -12,4 +12,6 @@ def screen_record():
         if cv2.waitKey(25) & 0xFF == ord('x'):
             cv2.destroyAllWindows()
             break
-            
+
+if __name__ == '__main__':
+    screen_record()
