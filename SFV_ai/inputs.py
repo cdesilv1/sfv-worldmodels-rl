@@ -422,11 +422,12 @@ def on_release(key):
 def main():
     time.sleep(10)
 
-    in_q = queue.Queue()
+    in_q_actions = queue.Queue()
+    in_q_recording = queue.Queue()
     # out_q = queue.Queue()
 
-    random_actions = random_action_thread(in_q)
-    screen_recording = screen_record_thread(in_q)
+    random_actions = random_action_thread(in_q_actions)
+    screen_recording = screen_record_thread(in_q_recording)
     random_actions.start()
     screen_recording.start()
 
@@ -435,8 +436,8 @@ def main():
             on_press = on_press,
             on_release = on_release) as listener:
             listener.join()
-            in_q.put(1)
-            in_q.put(1)
+            in_q_actions.put(1)
+            in_q_recording.put(1)
             time.sleep(30)
 
 
