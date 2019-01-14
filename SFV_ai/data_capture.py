@@ -14,9 +14,10 @@ def screen_record():
         k = cv2.waitKey(10000) & 0xFF
         if k == ord('x'):
             cv2.destroyAllWindows()
-            concat_data = np.stack(all_data, axis=2)
-            print(concat_data.shape)
             break
+
+        concat_data = np.stack(all_data, axis=2)
+        print(concat_data.shape)
 
 if __name__ == '__main__':
     screen_record()
