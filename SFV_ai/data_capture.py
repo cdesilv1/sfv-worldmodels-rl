@@ -29,6 +29,7 @@ class screen_record_thread(threading.Thread):
                 print('-------------------------------stop_triggered----------------------------')
                 concat_data = np.stack(self.all_data, axis=2)
                 np.save('sfv_{}.npy'.format(unix_time_millis(datetime.datetime.now()), concat_data))
+                print('data saved')
                 del concat_data 
                 self.all_data = []
                 gc.collect()    
