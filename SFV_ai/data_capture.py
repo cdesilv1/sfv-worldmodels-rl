@@ -5,7 +5,7 @@ import time
 import gc 
 
 def screen_record():
-    all_data = np.array([])
+    all_data = []
     while(True):
         # 800x600 windowed mode
         printscreen =  np.array(ImageGrab.grab(bbox=(0,40,800,640)).convert('L'))
