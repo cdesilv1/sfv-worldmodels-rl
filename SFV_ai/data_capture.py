@@ -26,7 +26,7 @@ class screen_record_thread(threading.Thread):
             try:
                 # print('trying')
                 stop_triggered = self.in_q.get(True, 0.0167)
-                print('stop_triggered')
+                print('-------------------------------stop_triggered----------------------------')
                 concat_data = np.stack(self.all_data, axis=2)
                 np.save('D:\sfv_game_data\sfv_{}.npy'.format(unix_time_millis(datetime.datetime.now()), concat_data))
                 del concat_data 
