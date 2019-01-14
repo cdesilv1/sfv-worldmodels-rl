@@ -5,6 +5,7 @@ import threading
 import pynput
 from pynput.keyboard import Key, Listener
 import queue
+from data_capture import screen_record_thread
 
 
 SendInput = ctypes.windll.user32.SendInput
@@ -425,14 +426,16 @@ def main():
     # out_q = queue.Queue()
 
     random_actions = random_action_thread(in_q)
-
+    screen_recording = screen_record_thread(in_q)
     random_actions.start()
+    screen_recording.start()
 
     while True:
         with Listener(
             on_press = on_press,
             on_release = on_release) as listener:
             listener.join()
+            in_q.put(1)
             in_q.put(1)
             time.sleep(30)
 

@@ -2,24 +2,36 @@ import numpy as np
 from PIL import ImageGrab
 import cv2
 import time
-import gc 
+import gc
+import threading
+import queue
+import datetime
+
+def unix_time_millis(dt):
+    epoch = datetime.datetime.utcfromtimestamp(0)
+    return int((dt - epoch).total_seconds() * 1000)
 
 def screen_record():
-    all_data = []
-    while(True):
-        # 800x600 windowed mode
-        printscreen =  np.array(ImageGrab.grab(bbox=(0,40,800,640)).convert('L'))
-        all_data.append(printscreen)
-        print(len(all_data))
-        print(all_data[-1].shape)
-        cv2.imshow('window',cv2.cvtColor(printscreen, cv2.COLOR_BGR2RGB))
-        k = cv2.waitKey(25) & 0xFF
-        if k == ord('x'):
-            cv2.destroyAllWindows()
-            break
+    # 800x600 windowed mode
+    printscreen =  np.array(ImageGrab.grab(bbox=(0,40,800,640)).convert('L'))
+    return printscreen 
 
-        concat_data = np.stack(all_data, axis=2)
-        print(concat_data.shape)
+class screen_record_thread(threading.Thread):
+    def __init__(self, in_q):
+        threading.Thread.__init__(self)
+        self.in_q = in_q
+        self.all_data = []
+    def run(self):
+        while True:
+            try:
+                stop_triggered = self.in_q.get(True, 0.0167)
+                concat_data = np.stack(self.all_data, axis=2)
+                np.save('D:\sfv_game_data\sfv_{}.npy'.format(unix_time_millis(datetime.datetime.now())))
+                del concat_data 
+                self.all_data = []
+                gc.collect()    
+            except:
+                self.all_data.append(screen_record())
 
 if __name__ == '__main__':
     time.sleep(10)
