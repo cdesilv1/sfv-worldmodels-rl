@@ -24,7 +24,7 @@ class screen_record_thread(threading.Thread):
     def run(self):
         while True:
             try:
-                print('trying')
+                # print('trying')
                 stop_triggered = self.in_q.get(True, 0.0167)
                 print('stop_triggered')
                 concat_data = np.stack(self.all_data, axis=2)
@@ -33,7 +33,7 @@ class screen_record_thread(threading.Thread):
                 self.all_data = []
                 gc.collect()    
             except:
-                print('exception')
+                # print('exception')
                 self.all_data.append(screen_record())
 
 if __name__ == '__main__':
