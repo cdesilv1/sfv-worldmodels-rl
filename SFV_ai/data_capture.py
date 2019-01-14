@@ -10,7 +10,7 @@ def screen_record():
         # 800x600 windowed mode
         printscreen =  np.array(ImageGrab.grab(bbox=(0,40,800,640)).convert('L'))
         all_data.append(printscreen)
-        cv2.imshow('window',cv2.cvtColor(printscreen, cv2.COLOR_BGR2RGB))
+        # cv2.imshow('window',cv2.cvtColor(printscreen, cv2.COLOR_BGR2RGB))
         k = cv2.waitKey(10000) & 0xFF
         if k == ord('x'):
             cv2.destroyAllWindows()
