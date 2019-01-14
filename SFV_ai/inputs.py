@@ -428,9 +428,9 @@ def main():
 
     random_actions = random_action_thread(in_q_actions)
     screen_recording = screen_record_thread(in_q_recording)
-    print('+++++++++++starting random actions+++++++++++++++')
+    # print('+++++++++++starting random actions+++++++++++++++')
     random_actions.start()
-    print('===========starting recording==================')
+    # print('===========starting recording==================')
     screen_recording.start()
 
     while True:
