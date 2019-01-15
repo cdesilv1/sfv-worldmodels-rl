@@ -24,17 +24,14 @@ class screen_record_thread(threading.Thread):
     def run(self):
         while True:
             try:
-                # print('trying')
                 stop_triggered = self.in_q.get(True, 0.0167)
                 concat_data = np.stack(self.all_data, axis=2)
-                print('data concatenated')
-                np.save('sfv_{}.npy'.format(unix_time_millis(datetime.datetime.now())), concat_data)
+                np.save('D:\\sfv_game_data\\sfv_{}.npy'.format(unix_time_millis(datetime.datetime.now())), concat_data)
                 print('data saved')
                 del concat_data 
                 self.all_data = []
                 gc.collect()    
             except:
-                # print('exception')
                 self.all_data.append(screen_record())
 
 if __name__ == '__main__':
