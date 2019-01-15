@@ -30,7 +30,7 @@ class screen_record_thread(threading.Thread):
                 f_name = 'D:\\sfv_game_data\\sfv_{}'.format(unix_time_millis(datetime.datetime.now()))
                 np.save(f_name+'.npy', concat_data)
                 print('data saved')
-                f_name_q.put(f_name)
+                self.f_name_q.put(f_name)
                 del concat_data 
                 self.all_data = []
                 gc.collect()
