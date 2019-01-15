@@ -6,7 +6,8 @@ import pynput
 from pynput.keyboard import Key, Listener
 import queue
 from data_capture import screen_record_thread
-
+import json
+import gc
 
 SendInput = ctypes.windll.user32.SendInput
 
@@ -55,8 +56,8 @@ VTRIGGER = [HP, HK]
 
 CHARGED_ATK = [MP, MK]
 
-def do_nothing():
-    time.sleep(0.4)
+def do_nothing(duration):
+    time.sleep(duration)
 
 
 # C struct redefinitions 
@@ -306,99 +307,166 @@ def LONG_SPINKICK_RIGHT():
 
 #############################Make Random Action#############################
 
-def make_random_action():
+def make_random_action(action_history=[]):
     '''
     For the case of the randomized actions, actions will be chosen from a distribution as follows: movemements: 20%, attacks: 45%, special_attacks: 25%, trigger_moves: 5%, do_nothing: 5%
     movement durations will be chosen uniformly, and once a category is chosen, actions will be chosen uniformly
     randomized action category PDF was chosen arbitrarily
     '''
 
-    movements = [UP, LEFT, RIGHT, DOWN, UP_LEFT, UP_RIGHT, DOWN_LEFT, DOWN_RIGHT, 'DASH_LEFT', 'DASH_RIGHT']
+    # movements = [UP, LEFT, RIGHT, DOWN, UP_LEFT, UP_RIGHT, DOWN_LEFT, DOWN_RIGHT, 'DASH_LEFT', 'DASH_RIGHT']
+
+    movements = ['UP', 'LEFT', 'RIGHT', 'DOWN', 'UP_LEFT', 'UP_RIGHT', 'DOWN_LEFT', 'DOWN_RIGHT', 'DASH_LEFT', 'DASH_RIGHT']
 
     durations = [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8]
 
-    attacks = [LK, MK, HK, LP, MP, HP, LEFT_MP, RIGHT_MP, LEFT_HP, RIGHT_HP, DOWN_HP, THROW]
+    # attacks = [LK, MK, HK, LP, MP, HP, LEFT_MP, RIGHT_MP, LEFT_HP, RIGHT_HP, DOWN_HP, THROW]
 
+    attacks = ['LK', 'MK', 'HK', 'LP', 'MP', 'HP', 'LEFT_MP', 'RIGHT_MP', 'LEFT_HP', 'RIGHT_HP', 'DOWN_HP', 'THROW']
+
+    '''
     special_attacks = [CHARGED_ATK, 'HADOKEN_LEFT', 'HADOKEN_RIGHT', 'SHAKUNETSU_HADOKEN_LEFT', 'SHAKUNETSU_HADOKEN_RIGHT', 'SHORYUKEN_LEFT',\
     'SHORYUKEN_RIGHT', 'KUREKIJIN_LEFT', 'KUREKIJIN_RIGHT', 'RYUSOKYAKU_LEFT', 'RYUSOKYAKU_RIGHT', 'SHORT_SPINKICK_LEFT',\
     'SHORT_SPINKICK_RIGHT', 'LONG_SPINKICK_LEFT', 'LONG_SPINKICK_RIGHT']
+    '''
 
-    trigger_moves = [VTRIGGER, 'METSU_SHORYUKEN_LEFT', 'METSU_SHORYUKEN_RIGHT']
+    special_attacks = ['CHARGED_ATK', 'HADOKEN_LEFT', 'HADOKEN_RIGHT', 'SHAKUNETSU_HADOKEN_LEFT', 'SHAKUNETSU_HADOKEN_RIGHT', 'SHORYUKEN_LEFT',\
+    'SHORYUKEN_RIGHT', 'KUREKIJIN_LEFT', 'KUREKIJIN_RIGHT', 'RYUSOKYAKU_LEFT', 'RYUSOKYAKU_RIGHT', 'SHORT_SPINKICK_LEFT',\
+    'SHORT_SPINKICK_RIGHT', 'LONG_SPINKICK_LEFT', 'LONG_SPINKICK_RIGHT']
+
+    # trigger_moves = [VTRIGGER, 'METSU_SHORYUKEN_LEFT', 'METSU_SHORYUKEN_RIGHT']
+
+    trigger_moves = ['VTRIGGER', 'METSU_SHORYUKEN_LEFT', 'METSU_SHORYUKEN_RIGHT']
 
 
     choose_action = random.randint(0, 101)
     if choose_action <=20:
         choice = random.choice(movements)
-        if type(choice) is str:
-            if choice == 'DASH_LEFT':
-                DASH_LEFT()
-            else:
-                DASH_RIGHT()
+        if choice == 'DASH_LEFT':
+            DASH_LEFT()
+        elif choice == 'DASH_RIGHT':
+            DASH_RIGHT()
+        elif choice == 'UP':
+            duration = random.choice(durations)
+            executeAction(UP, duration)
+        elif choice == 'LEFT':
+            duration = random.choice(durations)
+            executeAction(LEFT, duration)
+        elif choice == 'RIGHT':
+            duration = random.choice(durations)
+            executeAction(RIGHT, duration)
+        elif choice == 'DOWN':
+            duration = random.choice(durations)
+            executeAction(DOWN, duration)
+        elif choice == 'UP_LEFT':
+            duration = random.choice(durations)
+            executeAction(UP_LEFT, duration)
+        elif choice == 'UP_RIGHT':
+            duration = random.choice(durations)
+            executeAction(UP_RIGHT, duration)
+        elif choice == 'DOWN_LEFT':
+            duration = random.choice(durations)
+            executeAction(DOWN_LEFT, duration)
         else:
-            executeAction(choice, random.choice(durations))
+            duration = random.choice(durations)
+            executeAction(DOWN_RIGHT, duration)
     elif choose_action >20 and choose_action <=65:
         choice = random.choice(attacks)
-        executeAction(choice)
+        if choice == 'LK':
+            executeAction(LK)
+        elif choice == 'MK':
+            executeAction(MK)
+        elif choice == 'HK':
+            executeAction(HK)
+        elif choice == 'LP':
+            executeAction(LP)
+        elif choice == 'MP':
+            executeAction(MP)
+        elif choice == 'HP':
+            executeAction(HP)
+        elif choice == 'LEFT_MP':
+            executeAction(LEFT_MP)
+        elif choice == 'RIGHT_MP':
+            executeAction(RIGHT_MP)
+        elif choice == 'LEFT_HP':
+            executeAction(LEFT_HP)
+        elif choice == 'RIGHT_HP':
+            executeAction(RIGHT_HP)
+        elif choice == 'DOWN_HP':
+            executeAction(DOWN_HP)
+        else:
+            executeAction(THROW)
     elif choose_action >65 and choose_action <=90:
         choice = random.choice(special_attacks)
-        if type(choice) is str:
-            if choice == 'HADOKEN_LEFT':
-                HADOKEN_LEFT()
-            elif choice == 'HADOKEN_RIGHT':
-                HADOKEN_RIGHT()
-            elif choice == 'SHAKUNETSU_HADOKEN_LEFT':
-                SHAKUNETSU_HADOKEN_LEFT()
-            elif choice == 'SHAKUNETSU_HADOKEN_RIGHT':
-                SHAKUNETSU_HADOKEN_RIGHT()
-            elif choice == 'SHORYUKEN_LEFT':
-                SHORYUKEN_LEFT()
-            elif choice == 'SHORYUKEN_RIGHT':
-                SHORYUKEN_RIGHT()
-            elif choice == 'KUREKIJIN_LEFT':
-                KUREKIJIN_LEFT()
-            elif choice == 'KUREKIJIN_RIGHT':
-                KUREKIJIN_RIGHT()
-            elif choice == 'RYUSOKYAKU_LEFT':
-                RYUSOKYAKU_LEFT()
-            elif choice == 'RYUSOKYAKU_RIGHT':
-                RYUSOKYAKU_RIGHT()
-            elif choice == 'SHORT_SPINKICK_LEFT':
-                SHORT_SPINKICK_LEFT()
-            elif choice == 'SHORT_SPINKICK_RIGHT':
-                SHORT_SPINKICK_RIGHT()
-            elif choice == 'LONG_SPINKICK_LEFT':
-                LONG_SPINKICK_LEFT()
-            else:
-                LONG_SPINKICK_RIGHT()
+        if choice == 'HADOKEN_LEFT':
+            HADOKEN_LEFT()
+        elif choice == 'HADOKEN_RIGHT':
+            HADOKEN_RIGHT()
+        elif choice == 'SHAKUNETSU_HADOKEN_LEFT':
+            SHAKUNETSU_HADOKEN_LEFT()
+        elif choice == 'SHAKUNETSU_HADOKEN_RIGHT':
+            SHAKUNETSU_HADOKEN_RIGHT()
+        elif choice == 'SHORYUKEN_LEFT':
+            SHORYUKEN_LEFT()
+        elif choice == 'SHORYUKEN_RIGHT':
+            SHORYUKEN_RIGHT()
+        elif choice == 'KUREKIJIN_LEFT':
+            KUREKIJIN_LEFT()
+        elif choice == 'KUREKIJIN_RIGHT':
+            KUREKIJIN_RIGHT()
+        elif choice == 'RYUSOKYAKU_LEFT':
+            RYUSOKYAKU_LEFT()
+        elif choice == 'RYUSOKYAKU_RIGHT':
+            RYUSOKYAKU_RIGHT()
+        elif choice == 'SHORT_SPINKICK_LEFT':
+            SHORT_SPINKICK_LEFT()
+        elif choice == 'SHORT_SPINKICK_RIGHT':
+            SHORT_SPINKICK_RIGHT()
+        elif choice == 'LONG_SPINKICK_LEFT':
+            LONG_SPINKICK_LEFT()
+        elif choice == 'LONG_SPINKICK_RIGHT':
+            LONG_SPINKICK_RIGHT()
         else:
-            executeAction(choice)
+            executeAction(CHARGED_ATK)
     elif choose_action >90 and choose_action <=95:
         choice = random.choice(trigger_moves)
-        if type(choice) is str:
-            if choice == 'METSU_SHORYUKEN_LEFT':
-                METSU_SHORYUKEN_LEFT()
-            else:
-                METSU_SHORYUKEN_RIGHT()
+        if choice == 'METSU_SHORYUKEN_LEFT':
+            METSU_SHORYUKEN_LEFT()
+        elif choice == 'METSU_SHORYUKEN_RIGHT':
+            METSU_SHORYUKEN_RIGHT()
         else:
-            executeAction(choice)
+            executeAction(VTRIGGER)
     else:
-        do_nothing()
+        choice = 'donothing'
+        duration = random.choice(durations)
+        do_nothing(duration)
+    action_history.append((choice, duration))
+    duration = ''
     time.sleep(0.0167)
 
 
 #############################Threading Class#############################
 
 class random_action_thread(threading.Thread):
-    def __init__(self, in_q):
+    def __init__(self, in_q, f_name_q):
         threading.Thread.__init__(self)
         self.in_q = in_q
+        self.f_name_q = f_name_q
+        self.action_history = []
     def run(self):
         while True:
             try:
                 stop_triggered = self.in_q.get(True, 0.0167)
+                actions_serialized = json.dumps(self.action_history)
+                f_name = self.f_name_q.get(True, 0.0167)
+                with open(f_name) as f:
+                    f.write(actions_serialized)
+                self.action_history = []
+                del actions_serialized 
+                gc.collect()
                 time.sleep(29) # TODO: tune sleep time for macro stopping point
             except:
-                make_random_action()
+                make_random_action(self.action_history)
 
 
 #############################Listener Functions#############################
@@ -424,10 +492,11 @@ def main():
 
     in_q_actions = queue.Queue()
     in_q_recording = queue.Queue()
+    f_name_q = queue.Queue()
     # out_q = queue.Queue()
 
-    random_actions = random_action_thread(in_q_actions)
-    screen_recording = screen_record_thread(in_q_recording)
+    random_actions = random_action_thread(in_q_actions, f_name_q)
+    screen_recording = screen_record_thread(in_q_recording, f_name_q)
     random_actions.start()
     screen_recording.start()
 

@@ -17,17 +17,20 @@ def screen_record():
     return printscreen 
 
 class screen_record_thread(threading.Thread):
-    def __init__(self, in_q):
+    def __init__(self, in_q, f_name_q):
         threading.Thread.__init__(self)
         self.in_q = in_q
+        self.f_name_q = f_name_q
         self.all_data = []
     def run(self):
         while True:
             try:
                 stop_triggered = self.in_q.get(True, 0.0167)
                 concat_data = np.stack(self.all_data, axis=2)
-                np.save('D:\\sfv_game_data\\sfv_{}.npy'.format(unix_time_millis(datetime.datetime.now())), concat_data)
+                f_name = 'D:\\sfv_game_data\\sfv_{}'.format(unix_time_millis(datetime.datetime.now()))
+                np.save(f_name+'.npy', concat_data)
                 print('data saved')
+                f_name_q.put(f_name)
                 del concat_data 
                 self.all_data = []
                 gc.collect()
