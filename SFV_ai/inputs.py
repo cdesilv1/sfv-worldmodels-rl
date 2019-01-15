@@ -56,8 +56,8 @@ VTRIGGER = [HP, HK]
 
 CHARGED_ATK = [MP, MK]
 
-def do_nothing(duration):
-    time.sleep(duration)
+def do_nothing():
+    time.sleep(0.4)
 
 
 # C struct redefinitions 
@@ -438,8 +438,8 @@ def make_random_action(action_history=[]):
             executeAction(VTRIGGER)
     else:
         choice = 'donothing'
-        duration = random.choice(durations)
-        do_nothing(duration)
+        duration = 0.4
+        do_nothing()
     try:
         action_history.append((choice, duration))
     except:
@@ -462,7 +462,7 @@ class random_action_thread(threading.Thread):
                 stop_triggered = self.in_q.get(True, 0.0167)
                 actions_serialized = json.dumps(self.action_history)
                 f_name = self.f_name_q.get(True, 0.0167)
-                with open(f_name+'.json') as f:
+                with open(f_name+'.json', 'w') as f:
                     f.write(actions_serialized)
                 self.action_history = []
                 del actions_serialized 
