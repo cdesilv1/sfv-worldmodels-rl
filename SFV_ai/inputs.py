@@ -440,7 +440,10 @@ def make_random_action(action_history=[]):
         choice = 'donothing'
         duration = random.choice(durations)
         do_nothing(duration)
-    action_history.append((choice, duration))
+    try:
+        action_history.append((choice, duration))
+    except:
+        action_history.append((choice, ''))
     duration = ''
     time.sleep(0.0167)
 
