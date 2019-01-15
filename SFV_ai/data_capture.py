@@ -30,7 +30,8 @@ class screen_record_thread(threading.Thread):
                 print('data saved')
                 del concat_data 
                 self.all_data = []
-                gc.collect()    
+                gc.collect()
+                time.sleep(29)  
             except:
                 self.all_data.append(screen_record())
 
