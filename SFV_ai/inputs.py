@@ -460,8 +460,11 @@ class random_action_thread(threading.Thread):
         while True:
             try:
                 stop_triggered = self.in_q.get(True, 0.0167)
+                print('-------------stop_triggered---------------')
                 actions_serialized = json.dumps(self.action_history)
+                print('-------------actions serialized-------------')
                 f_name = self.f_name_q.get(True, 0.0167)
+                print('-------------f_name retrieved---------------')
                 with open(f_name+'.json', 'w') as f:
                     f.write(actions_serialized)
                 self.action_history = []
